@@ -8,16 +8,16 @@ import jakarta.json.JsonObjectBuilder;
 
 public class Pieces implements Serializable {
     
-    private DecodingBoard decodingBoard;
+    private DecodingBoard decoding_board;
     private Pegs pegs;
     private Rulebook rulebook;
 
-    public DecodingBoard getDecodingBoard() {
-        return decodingBoard;
+    public DecodingBoard getDecoding_board() {
+        return decoding_board;
     }
 
-    public void setDecodingBoard(DecodingBoard decodingBoard) {
-        this.decodingBoard = decodingBoard;
+    public void setDecoding_board(DecodingBoard decoding_board) {
+        this.decoding_board = decoding_board;
     }
 
     public Pegs getPegs() {
@@ -40,9 +40,9 @@ public class Pieces implements Serializable {
         
         //value parameter can be JSONObject, JSONArray, JSONNumber, JSONString
         return Json.createObjectBuilder()
-                .add("decoding_board", this.decodingBoard.toJSON())
-                .add("pegs", this.pegs.toJSON())
-                .add("rulebook", this.rulebook.toJSON());
+                .add("decoding_board", this.getDecoding_board().toJSON())
+                .add("pegs", this.getPegs().toJSON())
+                .add("rulebook", this.getRulebook().toJSON());
     }
 
     public static Pieces createJson(JsonObject o) {
@@ -52,11 +52,13 @@ public class Pieces implements Serializable {
         JsonObject pegs = o.getJsonObject("pegs");
         JsonObject rulebook = o.getJsonObject("rulebook");
 
-        pcs.setDecodingBoard(DecodingBoard.createJson(decodingBoard));
+        pcs.setDecoding_board(DecodingBoard.createJson(decodingBoard));
         pcs.setPegs(Pegs.createJson(pegs));
         pcs.setRulebook(Rulebook.createJson(rulebook));
 
         return pcs;
     }
+
+
 
 }
