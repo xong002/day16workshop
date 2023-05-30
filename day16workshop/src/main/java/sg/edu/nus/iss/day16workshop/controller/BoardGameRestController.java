@@ -40,7 +40,6 @@ public class BoardGameRestController {
         if (mm == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        mm.setId(mmId);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(mm.toJSON().toString());
     }
 
@@ -50,11 +49,11 @@ public class BoardGameRestController {
             throws IOException {
         Mastermind result = service.findById(mmId);
         if (result != null) {
-            mm.setId(mmId);
             int returnVal = service.updateGame(mm, mmId);
             if (returnVal == 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
+            result = service.findById(mmId);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(result.toJSON().toString());
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

@@ -89,10 +89,8 @@ public class Mastermind implements Serializable {
                 .build();
     }
 
-    
-    public static Mastermind createJson(String json) throws IOException {
+    public static Mastermind create(String json) throws IOException {
         Mastermind m = new Mastermind();
-
         //create Object from String of JSON
         if (json != null){
             try(InputStream is = new ByteArrayInputStream(json.getBytes())){
@@ -100,6 +98,7 @@ public class Mastermind implements Serializable {
                 JsonObject o = r.readObject();
                 m.setName(o.getString("name"));
                 m.setPieces(Pieces.createJson(o.getJsonObject("pieces")));
+                m.setId(o.getString("id"));
             }
         }
         return m;

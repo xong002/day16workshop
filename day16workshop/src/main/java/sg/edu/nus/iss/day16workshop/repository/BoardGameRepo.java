@@ -25,7 +25,7 @@ public class BoardGameRepo {
 
     public Mastermind findById(final String mmId) throws IOException{
         String jsonStringVal = (String) template.opsForValue().get(mmId); //returns String from database
-        Mastermind mm = Mastermind.createJson(jsonStringVal); //convert String to JsonObject, then set it to Mastermind obj
+        Mastermind mm = Mastermind.create(jsonStringVal); //convert String to JsonObject, then set it to Mastermind obj
         return mm;
     }
 
