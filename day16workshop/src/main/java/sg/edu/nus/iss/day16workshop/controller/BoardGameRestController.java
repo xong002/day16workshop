@@ -3,6 +3,7 @@ package sg.edu.nus.iss.day16workshop.controller;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.connection.ReactiveStringCommands.MSetCommand;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -26,18 +27,19 @@ public class BoardGameRestController {
     BoardGameService service;
 
     @PostMapping
-    public ResponseEntity<String> createBoardGame(@RequestBody Mastermind mm) {
+    public ResponseEntity<String> createBoardGame(@RequestBody Mastermind mm) throws IOException {
         int returnVal = service.saveGame(mm);
         if (returnVal == 0) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(mm.getId());
+        Mastermind result = service.findById(mm.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(result.toJSONInsert().toString());
     }
 
     @GetMapping("/{mmId}")
     public ResponseEntity<String> getBoardGame(@PathVariable String mmId) throws IOException {
         Mastermind mm = service.findById(mmId);
-        if (mm == null) {
+        if (mm.getName() == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(mm.toJSON().toString());
@@ -49,12 +51,16 @@ public class BoardGameRestController {
             throws IOException {
         Mastermind result = service.findById(mmId);
         if (result != null) {
-            int returnVal = service.updateGame(mm, mmId);
+            mm.setInsert_count(result.getInsert_count());
+            int updateCount = result.getUpdate_count();
+            mm.setUpdate_count(updateCount + 1);
+            mm.setId(mmId);
+            int returnVal = service.updateGame(mm);
             if (returnVal == 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
             result = service.findById(mmId);
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(result.toJSON().toString());
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(result.toJSONUpdate().toString());
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }

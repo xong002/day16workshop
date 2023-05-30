@@ -12,6 +12,7 @@ import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonReader;
 
 public class Mastermind implements Serializable {
+
     private String name;
     private Pieces pieces;
     private String id;
@@ -19,14 +20,14 @@ public class Mastermind implements Serializable {
     private int update_count;
     private boolean upsert;
 
-    public Mastermind(){
+    public Mastermind() {
         this.id = generateId(8);
     }
 
-    public synchronized String generateId(int maxChars){
-        SecureRandom sr= new SecureRandom();
+    public synchronized String generateId(int maxChars) {
+        SecureRandom sr = new SecureRandom();
         StringBuilder strbuilder = new StringBuilder();
-        while(strbuilder.length() < maxChars){
+        while (strbuilder.length() < maxChars) {
             strbuilder.append(Integer.toHexString(sr.nextInt()));
         }
 
@@ -86,22 +87,42 @@ public class Mastermind implements Serializable {
                 .add("name", this.getName())
                 .add("pieces", this.getPieces().toJSON())
                 .add("id", this.getId())
+                .add("insert_count", this.getInsert_count())
+                .add("update_count", this.getUpdate_count())
+                .build();
+    }
+
+    // JSON format to be returned
+    public JsonObject toJSONInsert() {
+        return Json.createObjectBuilder()
+                .add("insert_count", this.getInsert_count())
+                .add("id", this.getId())
+                .build();
+    }
+
+    // JSON format to be returned
+    public JsonObject toJSONUpdate() {
+        return Json.createObjectBuilder()
+                .add("update_count", this.getUpdate_count())
+                .add("id", this.getId())
                 .build();
     }
 
     public static Mastermind create(String json) throws IOException {
         Mastermind m = new Mastermind();
-        //create Object from String of JSON
-        if (json != null){
-            try(InputStream is = new ByteArrayInputStream(json.getBytes())){
+        // create Object from String of JSON
+        if (json != null) {
+            try (InputStream is = new ByteArrayInputStream(json.getBytes())) {
                 JsonReader r = Json.createReader(is);
                 JsonObject o = r.readObject();
                 m.setName(o.getString("name"));
                 m.setPieces(Pieces.createJson(o.getJsonObject("pieces")));
                 m.setId(o.getString("id"));
+                m.setInsert_count(o.getInt("insert_count"));
+                m.setUpdate_count(o.getInt("update_count"));
             }
         }
         return m;
     }
-   
+
 }

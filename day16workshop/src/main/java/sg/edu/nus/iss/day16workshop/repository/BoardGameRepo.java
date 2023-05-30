@@ -15,6 +15,8 @@ public class BoardGameRepo {
     RedisTemplate<String, String> template;
 
     public int saveGame(final Mastermind mm){
+        mm.setInsert_count(1);
+        mm.setUpdate_count(0);
         template.opsForValue().set(mm.getId(), mm.toJSON().toString());
         String result = template.opsForValue().get(mm.getId());
         if(result != null){
@@ -29,10 +31,10 @@ public class BoardGameRepo {
         return mm;
     }
 
-    public int updateGame(final Mastermind mm, String mmId){
-        String jsonStringVal = (String) template.opsForValue().get(mmId);
+    public int updateGame(final Mastermind mm){
+        String jsonStringVal = (String) template.opsForValue().get(mm.getId());
         if(jsonStringVal != null){
-            template.opsForValue().set(mmId, mm.toJSON().toString());
+            template.opsForValue().set(mm.getId(), mm.toJSON().toString());
             return 1;
         }
         return 0;

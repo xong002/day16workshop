@@ -22,7 +22,7 @@ public class BoardGameService {
         return repo.findById(mmId);
     }
 
-    public int updateGame(final Mastermind mm, String mmId){
-        return repo.updateGame(mm, mmId);
+    public int updateGame(final Mastermind mm){
+        return repo.updateGame(mm);
     }
 }
